@@ -9,6 +9,9 @@ public class Task {
     private boolean finished;
     private String createdAt;
 
+    public Task() {
+    }
+
     private Task(Builder builder) {
         this.uuid = builder.uuid;
         this.personId = builder.personId;
