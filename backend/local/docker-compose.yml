@@ -21,5 +21,16 @@ services:
     networks:
       - redis-net
 
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    depends_on:
+      - redis
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    restart: unless-stopped
+
 networks:
   redis-net:
