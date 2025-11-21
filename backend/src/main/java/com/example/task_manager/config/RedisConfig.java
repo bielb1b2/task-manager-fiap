@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RedisConfig {
 
-    @Value("${REDIS_URL}")
+    @Value("${DB_REDIS_URL}")
     private String redisUri;
 
     @Bean(destroyMethod = "shutdown")
