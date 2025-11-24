@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+    --color-midnight: #0D1633;
+}
+
+:root {
+    color: #fafaf9;
+}
