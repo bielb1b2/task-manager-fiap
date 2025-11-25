@@ -1,26 +1,30 @@
+import { uuidv7 } from "uuidv7"
+
 import { twMerge } from "tailwind-merge"
-import { CardBox } from "./components/card-box"
+import { CardList } from "./card-list"
+import { CreateUser } from "./create-user"
+import { useUser } from "./hooks/useUser"
+
 
 function App() {
+  const { userId, setUser } = useUser()
+
+  const createNewUser = () => {
+    setUser(uuidv7.toString())
+  }
 
   return (
-    <main className="flex flex-col h-screen w-screen items-center bg-zinc-900">
+    <main className="flex flex-col h-screen w-screen p-1 items-center bg-zinc-900">
       <section className={twMerge(
-        "flex flex-col w-[640px] items-center mt-10 p-4 rounded-l border-zinc-700 shadow",
-        "border-2"
+        "flex flex-col w-[640px] items-center mt-10 p-4 max-h-full overflow-y-auto",
+        "border-2 rounded-l border-zinc-700 shadow",
+        ""
       )}>
         <h1 className="text-4xl font-bold">
-          TaskManager AI
+          TaskManager
         </h1>
 
-        <div className="gap-2 mt-4 w-full">
-
-        <CardBox
-          cardTitle="Lorem Ipsium"
-          description="Descricao pai"
-        />
-
-        </div>
+        {userId ? <CardList /> : <CreateUser onClick={createNewUser} />}
       </section>
     </main>
   )
