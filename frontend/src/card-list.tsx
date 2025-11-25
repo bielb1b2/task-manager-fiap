@@ -30,7 +30,6 @@ export function CardList({ className, ...props }: CardListProps) {
 
     const [tasks, setTasks] = useState<ITask[]>([])
 
-
     useEffect(() => {
         setTasks(data)
     }, [tasks, data])
