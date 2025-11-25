@@ -1,8 +1,4 @@
 import { Search } from "lucide-react";
-import type { ComponentProps } from "react";
-
-interface CreateTaskProps extends ComponentProps<"div"> {}
-
 
 export function CreateTask() {
   return (
