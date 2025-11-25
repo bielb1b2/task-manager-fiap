@@ -16,9 +16,10 @@ export function CreateTask() {
           rounded-r-sm
           p-3
           h-full
+          cursor-pointer
         "
       >
-        <Plus size={20} className="text-zinc-950 hover:opacity-50 cursor-pointer" />
+        <Plus size={20} className="text-zinc-950 hover:opacity-50" />
       </button>
     </div>
   );
