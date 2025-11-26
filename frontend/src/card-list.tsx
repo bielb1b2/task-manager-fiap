@@ -1,9 +1,12 @@
 import type { ComponentProps } from "react";
-import { CardBox } from "./components/card-box";
 import { twMerge } from "tailwind-merge";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { InfinitySpin } from "react-loader-spinner"
+
+import { CardBox } from "./components/card-box";
 import { getTasks } from "./api/getTasks";
 import { useUser } from "./hooks/useUser";
+import toast from "react-hot-toast";
 
 
 interface CardListProps extends ComponentProps<"div"> {}
@@ -19,12 +22,11 @@ export function CardList({ className, ...props }: CardListProps) {
         queryKey: ["tasks"],
         queryFn: async () => {
             return await getTasks(userId as string)
-        }
+        },
     })
 
-    if (isPending) return "Loading..."
-
-    if (error) return "Happen an error"
+    if (isPending) return <InfinitySpin width="200" color="#fafaf9"  />
+    if (error) return <span className="text-zinc-100 mt-4 text-lg font-bold ">Could not load your tasks. ⚠️</span>;
 
     return(
         <div className={twMerge(
@@ -42,5 +44,5 @@ export function CardList({ className, ...props }: CardListProps) {
             )}
 
         </div>
-    )
+    )                   
 }

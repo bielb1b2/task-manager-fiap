@@ -1,7 +1,7 @@
 export interface ITask {
-    uuid: String;
-    title: String;
-    description: String;
+    uuid: string;
+    title: string;
+    description: string;
     finished: boolean;
-    createdAt: String;
+    createdAt: string;
 }

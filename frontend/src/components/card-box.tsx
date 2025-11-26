@@ -3,12 +3,30 @@ import { twMerge } from "tailwind-merge";
 import { Chechbox } from "./chebox";
 import { Trash } from "lucide-react";
 import type { ITask } from "../input/ITask";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { removeTask } from "../api/removeTask";
+import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 
 interface CardBoxProps extends ComponentProps<"span"> {
     task: ITask
 }
 
 export function CardBox({ task, className, ...props }: CardBoxProps) {
+
+    const { userId } = useUser();
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async () =>{ 
+            const response = await removeTask(userId!, task.uuid)
+            response ? toast.success("Task removed") : toast.error("Task could not be removed")
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tasks"] })
+        }
+    })
+
     return (
         <span
             className={twMerge(
@@ -33,11 +51,27 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
                     )}>
                         {task.description}
                     </span>
-                    <span className="text-sm mt-4 text-zinc-500 underline underline-offset-4">{task.createdAt}</span>
+                    <div className="flex items-center gap-1 mt-4">
+                        <span className="text-sm text-zinc-500 underline underline-offset-4 leading-none">
+                            {task.uuid}
+                        </span>
+
+                        <span className="text-zinc-500"> • </span>
+
+                        <span className="text-sm text-zinc-500 underline underline-offset-4 leading-none">
+                            {task.createdAt}
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <Trash size={20} className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+            <Trash 
+                size={20} 
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"  
+                onClick={() => {
+                    mutation.mutate()
+                }}
+            />
         </span>
     )
 }
