@@ -1,38 +1,30 @@
-import { useEffect, useState, type ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { CardBox } from "./components/card-box";
 import { twMerge } from "tailwind-merge";
-import type { ITask } from "./input/ITask";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getTasks } from "./api/getTasks";
+import { useUser } from "./hooks/useUser";
 
 
 interface CardListProps extends ComponentProps<"div"> {}
 
 
-const data: ITask[] = [
-    {
-        uuid: "695876859685765",
-        title: "Task 1",
-        description: "Description 1",
-        finished: false,
-        createdAt: new Date().toString()
-    },
-    {
-        uuid: "3423423423432",
-        title: "Task 2",
-        description: "Description 2",
-        finished: true,
-        createdAt: new Date().toString()
-    }
-]
-
-
 
 export function CardList({ className, ...props }: CardListProps) {
 
-    const [tasks, setTasks] = useState<ITask[]>([])
+    const { userId } = useUser()
+    
+    const queryClient = useQueryClient()
+    const { isPending, error, data } = useQuery({
+        queryKey: ["tasks"],
+        queryFn: async () => {
+            return await getTasks(userId as string)
+        }
+    })
 
-    useEffect(() => {
-        setTasks(data)
-    }, [tasks, data])
+    if (isPending) return "Loading..."
+
+    if (error) return "Happen an error"
 
     return(
         <div className={twMerge(
@@ -42,7 +34,7 @@ export function CardList({ className, ...props }: CardListProps) {
         {...props}
         >
 
-            {tasks.map((task, index) => 
+            {data.map((task, index) => 
                 <CardBox
                     key={index}
                     task={task}

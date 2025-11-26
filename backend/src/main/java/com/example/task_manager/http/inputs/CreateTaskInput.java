@@ -20,6 +20,8 @@ public class CreateTaskInput {
         return description;
     }
 
+    public CreateTaskInput() {}
+
     private CreateTaskInput(Builder builder) {
         this.personId = builder.personId;
         this.title = builder.title;

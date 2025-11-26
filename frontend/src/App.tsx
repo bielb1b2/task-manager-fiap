@@ -7,6 +7,8 @@ import { useUser } from "./hooks/useUser"
 import { UserDisplay } from "./components/user-display"
 import { Toaster } from "react-hot-toast"
 import { CreateTask } from "./create-task"
+import { QueryClientProvider } from "@tanstack/react-query"
+import { queryClient } from "./lib/query-client"
 
 function App() {
   const { userId, setUser } = useUser()
@@ -16,7 +18,7 @@ function App() {
   }
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Toaster 
         position="top-right"
       />
@@ -40,7 +42,7 @@ function App() {
         </section>
           
       </main>
-    </>
+    </QueryClientProvider>
   )
 }
 
