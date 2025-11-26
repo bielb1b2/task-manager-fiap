@@ -1,26 +1,22 @@
+import type { ComponentProps } from "react";
 import { Plus } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
-export function CreateTask() {
+interface CreateTaskProps extends ComponentProps<"button"> {
+
+}
+
+export function CreateTask({ className, ...props }: CreateTaskProps) {
   return (
-    <div className="flex w-full items-center mt-4 border-zinc-200 rounded">
-      <input
-        placeholder="Comprar ovo..."
-        className="flex w-full border-2 outline-none border-zinc-200 p-3 rounded-l-md"
-      />
-
-      <button
-        className="
-          flex items-center justify-center
-          bg-zinc-200 hover:bg-zinc-300 active:bg-zinc-400
-          transition-colors
-          rounded-r-sm
-          p-3
-          h-full
-          cursor-pointer
-        "
-      >
-        <Plus size={20} className="text-zinc-950 hover:opacity-50" />
-      </button>
-    </div>
+    <button className={twMerge(
+      "flex justify-center items-center gap-2 bg-zinc-100 p-3 w-full rounded-lg mt-4 cursor-pointer",
+      "hover:opacity-60 transition-opacity duration-200 ease-in-out",
+      className
+    )}
+    {...props}
+    >
+      <span className="font-bold text-zinc-900 text-lg">New Task</span>
+      <Plus className="stroke-zinc-900" size={18} strokeWidth={3} />
+    </button>
   );
 }
