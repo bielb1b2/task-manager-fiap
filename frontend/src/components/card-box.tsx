@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import { Chechbox } from "./chebox";
-import { Trash } from "lucide-react";
+import { Pencil, PencilIcon, PencilLine, Trash } from "lucide-react";
 import type { ITask } from "../input/ITask";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeTask } from "../api/removeTask";
@@ -78,6 +78,15 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
                 </div>
             </div>
 
+            <div className="flex gap-2 items-center justify-center">
+            <PencilLine 
+                size={20} 
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"  
+                onClick={() => {
+                    console.log("Not implemented")
+                }}
+            />
+
             <Trash 
                 size={20} 
                 className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"  
@@ -85,6 +94,7 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
                     mutation.mutate()
                 }}
             />
+            </div>
         </span>
     )
 }
