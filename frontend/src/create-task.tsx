@@ -1,22 +1,163 @@
-import type { ComponentProps } from "react";
-import { Plus } from "lucide-react";
+import { useState, type ComponentProps } from "react";
+import { Plus, X } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+
+import * as DialogRadix from "@radix-ui/react-dialog"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createTask } from "./api/createTask";
+import toast from "react-hot-toast";
+import { useUser } from "./hooks/useUser";
+import { InfinitySpin } from "react-loader-spinner";
 
 interface CreateTaskProps extends ComponentProps<"button"> {
 
 }
 
 export function CreateTask({ className, ...props }: CreateTaskProps) {
+
+  const { userId } = useUser();
+  const queryClient = useQueryClient()
+
+  const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: async (payload: {
+      userId: string
+      title: string
+      description: string
+    }) => {
+      return await createTask(payload)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] })
+
+      setOpen(false);
+      setTitle("");
+      setDescription("");
+
+      toast.success("Task created successfully.");
+    },
+    onError: () => {
+      toast.error("Failed to create the task. Please try again.");
+    }
+  })
+
+  const handleSave = () => {
+    if (!userId) {
+      toast.error("User ID is required.");
+      return;
+    }
+
+    if (!title.trim()) {
+      toast.error("A title is required.");
+      return;
+    }
+
+    if (!description.trim()) {
+      toast.error("A description is required.");
+      return;
+    }
+
+    mutation.mutate({
+      userId: userId as string,
+      title: title.trim(),
+      description: description.trim(),
+    });
+  };
+
   return (
-    <button className={twMerge(
-      "flex justify-center items-center gap-2 bg-zinc-100 p-3 w-full rounded-lg mt-4 cursor-pointer",
-      "hover:opacity-60 transition-opacity duration-200 ease-in-out",
-      className
-    )}
-    {...props}
-    >
-      <span className="font-bold text-zinc-900 text-lg">New Task</span>
-      <Plus className="stroke-zinc-900" size={18} strokeWidth={3} />
-    </button>
+    <DialogRadix.Root open={open} onOpenChange={setOpen}>
+      <DialogRadix.Trigger asChild>
+        <button
+          className={twMerge(
+            "flex justify-center items-center gap-2 bg-zinc-100 p-3 w-full rounded-lg mt-4 shadow-md cursor-pointer",
+            "hover:opacity-90 active:scale-[0.998] transition-all duration-150 ease-in-out",
+            className
+          )}
+          {...props}
+        >
+          <span className="font-bold text-zinc-900 text-lg leading-none">New Task</span>
+          <Plus className="stroke-zinc-900" size={18} strokeWidth={3} />
+        </button>
+      </DialogRadix.Trigger>
+
+      <DialogRadix.Portal>
+        <DialogRadix.Overlay
+          className="
+            fixed inset-0 bg-black/60
+            animate-radix-overlay-in
+          "
+        />
+
+        <DialogRadix.Content
+          className="
+            fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+            w-[90vw] max-w-md max-h-[85vh]
+            bg-white dark:bg-zinc-900
+            shadow-lg rounded-lg p-6
+            animate-radix-content-in
+            outline-none
+          "
+          aria-describedby="dialog-desc"
+        >
+          <DialogRadix.Title className="m-0 text-zinc-900 dark:text-zinc-100 font-medium text-lg">
+            New Task
+          </DialogRadix.Title>
+
+          <DialogRadix.Description id="dialog-desc" className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+            Stay focused. Small steps create big results.
+          </DialogRadix.Description>
+
+          <fieldset className="flex flex-col gap-1 mb-4 mt-4">
+            <label className=" ext-sm text-zinc-700 dark:text-zinc-300">Title</label>
+            <input
+              className="flex-1 px-3 py-2 rounded-md text-sm bg-zinc-800 border-zinc-700 border focus:outline-none focus:ring-2  focus:ring-zinc-50"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </fieldset>
+
+          <fieldset className="flex flex-col gap-1 mb-4 mt-4">
+            <label className=" ext-sm text-zinc-700 dark:text-zinc-300">Description</label>
+            <input
+              className="flex-1 px-3 py-2 rounded-md text-sm bg-zinc-800 border-zinc-700 border focus:outline-none focus:ring-2  focus:ring-zinc-50"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </fieldset>
+
+          <div className="mt-6 flex justify-end gap-3">
+            <DialogRadix.Close asChild>
+              <button 
+                onClick={handleSave}
+                disabled={mutation.isPending}
+                className="px-4 py-2 bg-zinc-100 text-zinc-800 rounded-md text-sm font-bold hover:opacity-70 cursor-pointer duration-200"
+              >
+                { mutation.isPending ? <InfinitySpin width="200" color="#fafaf9"  /> : <span>Save changes</span> }
+              </button>
+            </DialogRadix.Close>
+          </div>
+
+          <DialogRadix.Close asChild>
+            <button
+              aria-label="Close"
+              className="
+                absolute top-3 right-3 inline-flex items-center justify-center
+                h-9 w-9 rounded-full bg-zinc-800
+                hover:bg-zinc-700
+                focus:outline-none focus:ring-2 focus:ring-zinc-100
+              "
+            >
+              <X size={20} />
+            </button>
+          </DialogRadix.Close>
+        </DialogRadix.Content>
+      </DialogRadix.Portal>
+
+    </DialogRadix.Root>
   );
 }
