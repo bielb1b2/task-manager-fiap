@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeTask } from "../api/removeTask";
 import { useUser } from "../hooks/useUser";
 import toast from "react-hot-toast";
+import { finishTask } from "../api/finishTask";
 
 interface CardBoxProps extends ComponentProps<"span"> {
     task: ITask
@@ -27,6 +28,16 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
         }
     })
 
+    const mutationFinish = useMutation({
+        mutationFn: async () =>{ 
+            const response = await finishTask(userId!, task.uuid)
+            response ? toast.success("Task updated") : toast.error("Task could not be updated")
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tasks"] })
+        }
+    })
+
     return (
         <span
             className={twMerge(
@@ -37,7 +48,9 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
             {...props}
         >
             <div className="flex w-full items-center">
-                <Chechbox />
+                <Chechbox onCheckedChange={() => {
+                    mutationFinish.mutate()
+                }} />
                 <div className="flex flex-col ml-4">
                     <span className={twMerge(
                         "text-lg leading-tight",
