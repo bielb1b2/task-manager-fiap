@@ -79,7 +79,10 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
             </div>
 
             <div className="flex gap-2 items-center justify-center">
-            <EditTask task={task} />
+            <EditTask 
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                task={task} 
+            />
 
             <Trash 
                 size={20} 

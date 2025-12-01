@@ -9,7 +9,7 @@ export interface EditTaskApiProps {
     finished: boolean
 }
 
-export async function editTaskApi(task: EditTaskProps): Promise<ITask> {
+export async function editTaskApi(task: EditTaskApiProps): Promise<ITask> {
 
   const res = await api.patch(`api/task/${task.personId}/${task.taskId}`, {
     json: {

@@ -1,7 +1,7 @@
 import * as DialogRadix from "@radix-ui/react-dialog"
-import { useEffect, useState, type ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
-import { PencilLine, Plus, X } from "lucide-react";
+import { PencilLine, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfinitySpin } from "react-loader-spinner";
@@ -15,7 +15,7 @@ interface EditTaskProps extends ComponentProps<"button"> {
     task: ITask
 }
 
-export function EditTask({ task, className, ...props }: EditTaskProps) {
+export function EditTask({ task, className }: EditTaskProps) {
 
     const { userId } = useUser();
     const queryClient = useQueryClient()
@@ -72,7 +72,9 @@ export function EditTask({ task, className, ...props }: EditTaskProps) {
             <DialogRadix.Trigger asChild>
                 <PencilLine
                     size={20}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    className={twMerge(
+                        className
+                    )}
                     onClick={() => {
                         console.log("Not implemented")
                     }}
