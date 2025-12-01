@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'maven:3.9.3-eclipse-temurin-21-alpine'  // imagem com Maven + Java 21
+      image 'maven:3.9.11-eclipse-temurin-21'  // imagem com Maven + Java 21
       args '-v $HOME/.m2:/root/.m2'         // opcional: cache do repositório Maven entre builds
     }
   }
