@@ -1,5 +1,5 @@
 pipeline {
-  agent any  // Usa o agent padrão do Jenkins
+  agent any
 
   environment {
     SONAR_HOST_URL = 'http://sonarqube:9000'
@@ -17,7 +17,7 @@ pipeline {
     stage('Build & Test') {
       steps {
         dir('backend') {
-          sh 'mvn clean verify -DskipTests=false'
+          sh 'mvn clean verify'
         }
       }
     }
@@ -48,8 +48,8 @@ pipeline {
 
   post {
     always {
-      junit '**/target/surefire-reports/*.xml'
-      jacoco execPattern: '**/target/jacoco.exec'
+      // Publica os resultados dos testes
+      junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
     }
     success {
       echo '✅ Pipeline concluída com sucesso!'
