@@ -2,9 +2,11 @@ version: "3.9"
 
 services:
 
+  # ---------- BACKEND ----------
   backend:
     container_name: backend
-    build: ..
+    build:
+      context: ./backend
     ports:
       - "8080:8080"
     environment:
@@ -13,11 +15,22 @@ services:
     depends_on:
       - redis
     networks:
+      - app-net
       - redis-net
 
+  # ---------- FRONTEND ----------
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - backend
+    networks:
+      - app-net
 
-
-
+  # ---------- REDIS ----------
   redis:
     image: redis:latest
     container_name: redis
@@ -28,15 +41,19 @@ services:
     networks:
       - redis-net
 
+  # ---------- REDIS INSIGHT ----------
   redis-insight:
     image: redis/redisinsight:latest
     container_name: redis-insight
     ports:
       - "5540:5540"
     restart: unless-stopped
+    depends_on:
+      - redis
     networks:
       - redis-net
 
+  # ---------- SONARQUBE ----------
   sonarqube:
     image: sonarqube:latest
     container_name: sonarqube
@@ -47,6 +64,10 @@ services:
     environment:
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
     restart: unless-stopped
+    networks:
+      - app-net
 
+# ---------- NETWORKS ----------
 networks:
   redis-net:
+  app-net:
