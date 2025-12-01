@@ -6,7 +6,6 @@ import { InfinitySpin } from "react-loader-spinner"
 import { CardBox } from "./components/card-box";
 import { getTasks } from "./api/getTasks";
 import { useUser } from "./hooks/useUser";
-import toast from "react-hot-toast";
 
 
 interface CardListProps extends ComponentProps<"div"> {}
