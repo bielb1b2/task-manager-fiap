@@ -60,28 +60,18 @@ services:
 
   jenkins:
     container_name: jenkins
-    image: jenkins/jenkins:lts
+    build:
+      context: ./jenkins
+    user: root
     ports:
       - "8081:8080"
       - "50000:50000"
     volumes:
       - ./jenkins-data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
+      - ./maven-cache:/root/.m2  # Só o cache do Maven
     restart: unless-stopped
     networks:
       - app-net
-
-  jenkins-agent:
-    image: maven:3.9.11-eclipse-temurin-21
-    container_name: jenkins-agent
-    volumes:
-      - ./maven-cache:/root/.m2
-      - ./backend:/workspace
-    networks:
-      - app-net
-    command: tail -f /dev/null  # Mantém container rodando
-    restart: unless-stopped
 
 networks:
   redis-net:

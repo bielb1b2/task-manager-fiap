@@ -10,6 +10,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
+        echo '📦 Clonando repositório do GitHub...'
         checkout scm
       }
     }
@@ -17,6 +18,7 @@ pipeline {
     stage('Build & Test') {
       steps {
         dir('backend') {
+          echo '🔨 Compilando e testando o projeto...'
           sh 'mvn clean verify'
         }
       }
@@ -25,12 +27,13 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         dir('backend') {
+          echo '📊 Enviando análise para o SonarQube...'
           withSonarQubeEnv('SonarQube Server') {
             sh """
               mvn sonar:sonar \
-                -Dsonar.host.url=\${SONAR_HOST_URL} \
-                -Dsonar.token=\${SONAR_TOKEN} \
-                -Dsonar.projectKey=\${SONAR_PROJECT_KEY}
+                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                -Dsonar.host.url=${SONAR_HOST_URL} \
+                -Dsonar.token=${SONAR_TOKEN}
             """
           }
         }
@@ -39,6 +42,7 @@ pipeline {
 
     stage('Quality Gate') {
       steps {
+        echo '🎯 Aguardando Quality Gate do SonarQube...'
         timeout(time: 5, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true
         }
@@ -48,10 +52,14 @@ pipeline {
 
   post {
     success {
-      echo '✅ Build concluído! Cobertura disponível no SonarQube: http://localhost:9000'
+      echo '✅ Pipeline executada com sucesso!'
+      echo "📊 Relatório SonarQube: http://localhost:9000/dashboard?id=${SONAR_PROJECT_KEY}"
     }
     failure {
-      echo '❌ Build falhou. Verifique os logs acima.'
+      echo '❌ Pipeline falhou! Verifique os logs acima.'
+    }
+    always {
+      echo '🧹 Limpeza concluída.'
     }
   }
 }
