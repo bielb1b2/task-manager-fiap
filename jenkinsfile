@@ -28,9 +28,9 @@ pipeline {
           withSonarQubeEnv('SonarQube Server') {
             sh """
               mvn sonar:sonar \
-                -Dsonar.host.url=${SONAR_HOST_URL} \
-                -Dsonar.token=${SONAR_TOKEN} \
-                -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+                -Dsonar.host.url=\${SONAR_HOST_URL} \
+                -Dsonar.token=\${SONAR_TOKEN} \
+                -Dsonar.projectKey=\${SONAR_PROJECT_KEY}
             """
           }
         }
@@ -47,15 +47,11 @@ pipeline {
   }
 
   post {
-    always {
-      // Publica os resultados dos testes
-      junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
-    }
     success {
-      echo '✅ Pipeline concluída com sucesso!'
+      echo '✅ Build concluído! Cobertura disponível no SonarQube: http://localhost:9000'
     }
     failure {
-      echo '❌ Pipeline falhou!'
+      echo '❌ Build falhou. Verifique os logs acima.'
     }
   }
 }
