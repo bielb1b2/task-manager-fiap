@@ -72,6 +72,17 @@ services:
     networks:
       - app-net
 
+  jenkins-agent:
+    image: maven:3.9.11-eclipse-temurin-21
+    container_name: jenkins-agent
+    volumes:
+      - ./maven-cache:/root/.m2
+      - ./backend:/workspace
+    networks:
+      - app-net
+    command: tail -f /dev/null  # Mantém container rodando
+    restart: unless-stopped
+
 networks:
   redis-net:
   app-net:
