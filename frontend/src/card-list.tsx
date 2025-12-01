@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { InfinitySpin } from "react-loader-spinner"
 
 import { CardBox } from "./components/card-box";
@@ -16,7 +16,6 @@ export function CardList({ className, ...props }: CardListProps) {
 
     const { userId } = useUser()
     
-    const queryClient = useQueryClient()
     const { isPending, error, data } = useQuery({
         queryKey: ["tasks"],
         queryFn: async () => {

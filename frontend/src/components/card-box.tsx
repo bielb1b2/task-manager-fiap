@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import { Chechbox } from "./chebox";
-import { PencilLine, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import type { ITask } from "../input/ITask";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeTask } from "../api/removeTask";
