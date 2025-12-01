@@ -1,0 +1,30 @@
+pipeline {
+  agent {
+    docker {
+      image 'maven:3.9.3-eclipse-temurin-21'  // imagem com Maven + Java 21
+      args '-v $HOME/.m2:/root/.m2'         // opcional: cache do repositório Maven entre builds
+    }
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Build Backend') {
+      steps {
+        dir('backend') {
+          sh 'mvn clean install -DskipTests=false'
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Build concluído"
+    }
+  }
+}

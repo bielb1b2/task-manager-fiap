@@ -67,6 +67,31 @@ services:
     networks:
       - app-net
 
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins:lts
+    ports:
+      - "8081:8080"   # UI (host:container)
+      - "50000:50000" # agent port
+    volumes:
+      - ./jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock           # permite controlar o docker host
+      - /usr/bin/docker:/usr/bin/docker      
+    restart: unless-stopped
+      # opcional: monte o socket do docker para permitir builds que usam docker (risco de segurança)
+      # - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # evita prompts interativos no primeiro boot (opcional)
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+    networks:
+      - app-net
+
+    # Se você precisa que o Jenkins controle o Docker do host (ex.: build de imagens),
+    # descomente a linha do volume do socket (acima) e considere também montar o binário docker:
+    #   - /usr/bin/docker:/usr/bin/docker
+    # Atenção: isso dá ao Jenkins acesso ao Docker host (privilégios elevados).
+
+
 # ---------- NETWORKS ----------
 networks:
   redis-net:
