@@ -1,6 +1,1 @@
 DB_REDIS_URL: ${REDIS_URL:redis://localhost:6379}
-
-teams:
-  bot:
-    app-id: ${}
-    app-password: ${}
