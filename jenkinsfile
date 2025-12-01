@@ -1,9 +1,15 @@
 pipeline {
   agent {
     docker {
-      image 'maven:3.9.11-eclipse-temurin-21'  // imagem com Maven + Java 21
-      args '-v $HOME/.m2:/root/.m2'         // opcional: cache do repositório Maven entre builds
+      image 'maven:3.9.3-eclipse-temurin-21'
+      args '-v $HOME/.m2:/root/.m2'
     }
+  }
+
+  environment {
+    SONAR_HOST_URL = 'http://sonarqube:9000'
+    SONAR_TOKEN    = credentials('sonar-token-id')
+    SONAR_PROJECT_KEY = 'task-manager-backend'
   }
 
   stages {
@@ -20,11 +26,32 @@ pipeline {
         }
       }
     }
+
+    stage('SonarQube Analysis') {
+      steps {
+        dir('backend') {
+          withSonarQubeEnv('SonarQube Server') {
+            sh "mvn sonar:sonar \
+               -Dsonar.host.url=$SONAR_HOST_URL \
+               -Dsonar.login=$SONAR_TOKEN \
+               -Dsonar.projectKey=$SONAR_PROJECT_KEY"
+          }
+        }
+      }
+    }
+
+    stage('Quality Gate') {
+      steps {
+        timeout(time: 5, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
   }
 
   post {
     always {
-      echo "Build concluído"
+      echo "Pipeline finalizada"
     }
   }
 }

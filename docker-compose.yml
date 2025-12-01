@@ -1,8 +1,4 @@
-version: "3.9"
-
 services:
-
-  # ---------- BACKEND ----------
   backend:
     container_name: backend
     build:
@@ -18,19 +14,17 @@ services:
       - app-net
       - redis-net
 
-  # ---------- FRONTEND ----------
   frontend:
     container_name: frontend
     build:
       context: ./frontend
     ports:
-      - "3000:3000" 
+      - "3000:3000"
     depends_on:
       - backend
     networks:
       - app-net
 
-  # ---------- REDIS ----------
   redis:
     image: redis:latest
     container_name: redis
@@ -41,7 +35,6 @@ services:
     networks:
       - redis-net
 
-  # ---------- REDIS INSIGHT ----------
   redis-insight:
     image: redis/redisinsight:latest
     container_name: redis-insight
@@ -53,46 +46,36 @@ services:
     networks:
       - redis-net
 
-  # ---------- SONARQUBE ----------
   sonarqube:
-    image: sonarqube:latest
+    image: sonarqube:community
     container_name: sonarqube
-    depends_on:
-      - redis
     ports:
       - "9000:9000"
-    environment:
-      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
     restart: unless-stopped
     networks:
       - app-net
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
 
   jenkins:
     container_name: jenkins
     image: jenkins/jenkins:lts
     ports:
-      - "8081:8080"   # UI (host:container)
-      - "50000:50000" # agent port
+      - "8081:8080"
+      - "50000:50000"
     volumes:
       - ./jenkins-data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock           # permite controlar o docker host
-      - /usr/bin/docker:/usr/bin/docker      
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
     restart: unless-stopped
-      # opcional: monte o socket do docker para permitir builds que usam docker (risco de segurança)
-      # - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      # evita prompts interativos no primeiro boot (opcional)
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
     networks:
       - app-net
 
-    # Se você precisa que o Jenkins controle o Docker do host (ex.: build de imagens),
-    # descomente a linha do volume do socket (acima) e considere também montar o binário docker:
-    #   - /usr/bin/docker:/usr/bin/docker
-    # Atenção: isso dá ao Jenkins acesso ao Docker host (privilégios elevados).
-
-
-# ---------- NETWORKS ----------
 networks:
   redis-net:
   app-net:
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
