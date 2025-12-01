@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast"
 import { CreateTask } from "./create-task"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { queryClient } from "./lib/query-client"
+import StarfieldBackground from "./components/starfield-background"
 
 function App() {
   const { userId, setUser } = useUser()
@@ -19,10 +20,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StarfieldBackground />
       <Toaster 
         position="top-right"
       />
-      <main className="flex flex-col h-screen w-screen p-1 items-center bg-zinc-900">
+      <main className="flex flex-col h-screen w-screen p-1 items-center relative">
         <section className={twMerge(
           "flex flex-col w-[640px] items-center mt-10 p-4 max-h-full overflow-y-auto",
           "border-2 rounded-lg border-zinc-700 shadow"

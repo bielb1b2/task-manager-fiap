@@ -21,8 +21,10 @@
     "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",
     "react-loader-spinner": "^8.0.0",
+    "react-tsparticles": "^2.12.2",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
+    "tsparticles": "^3.9.1",
     "uuidv7": "^1.0.2",
     "zustand": "^5.0.8"
   },
