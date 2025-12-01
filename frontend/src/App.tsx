@@ -29,8 +29,8 @@ function App() {
           "flex flex-col w-[640px] items-center mt-10 p-4 max-h-full overflow-y-auto",
           "border-2 rounded-lg border-zinc-700 shadow"
         )}>
-          <h1 className="text-4xl font-bold">
-            TaskManager
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            TaskManager Starfield
           </h1>
 
           {userId == null ?  <CreateUser onClick={createNewUser} />
