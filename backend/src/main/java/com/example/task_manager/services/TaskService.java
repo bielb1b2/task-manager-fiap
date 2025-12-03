@@ -2,12 +2,14 @@ package com.example.task_manager.services;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.example.task_manager.entities.Task;
+import com.example.task_manager.entities.TaskMessage;
 import com.example.task_manager.exceptions.NotFoundException;
 import com.example.task_manager.exceptions.ValidateException;
 import com.example.task_manager.http.inputs.CreateTaskInput;
 import com.example.task_manager.http.inputs.UpdateTaskInput;
 import com.example.task_manager.http.out.TaskOut;
 import com.example.task_manager.repository.ITaskRepository;
+import com.example.task_manager.utils.Action;
 import com.example.task_manager.utils.TaskMapper;
 import com.example.task_manager.validators.CreateTaskValidate;
 import com.example.task_manager.validators.OneTaskValidate;
@@ -19,16 +21,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 
 @Service
 public class TaskService implements ITaskService {
 
     private final ITaskRepository taskRepository;
+    private final ITaskMessageService taskMessageService;
 
     @Autowired
-    public TaskService(ITaskRepository taskRepository) {
+    public TaskService(
+            ITaskRepository taskRepository,
+            ITaskMessageService taskMessageService
+    ) {
         this.taskRepository = taskRepository;
+        this.taskMessageService = taskMessageService;
     }
 
     @Override
@@ -47,7 +56,12 @@ public class TaskService implements ITaskService {
 
         Task createdTask = taskRepository.save(task);
 
-        return TaskMapper.toOut(task);
+        CompletableFuture.runAsync(() -> {
+            TaskMessage taskMessage = TaskMapper.toTaskMessage(createdTask, Action.CREATE);
+            taskMessageService.execute(taskMessage);
+        }, Executors.newSingleThreadExecutor());
+
+       return TaskMapper.toOut(task);
     }
 
     @Override

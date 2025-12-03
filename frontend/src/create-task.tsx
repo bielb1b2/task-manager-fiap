@@ -132,7 +132,8 @@ export function CreateTask({ className, ...props }: CreateTaskProps) {
 
           <div className="mt-6 flex justify-end gap-3">
             <DialogRadix.Close asChild>
-              <button 
+              <button
+                id="task-submit"
                 onClick={handleSave}
                 disabled={mutation.isPending}
                 className="px-4 py-2 bg-zinc-100 text-zinc-800 rounded-md text-sm font-bold hover:opacity-70 cursor-pointer duration-200"

@@ -1,6 +1,7 @@
 package com.example.task_manager.utils;
 
 import com.example.task_manager.entities.Task;
+import com.example.task_manager.entities.TaskMessage;
 import com.example.task_manager.http.inputs.UpdateTaskInput;
 import com.example.task_manager.http.out.TaskOut;
 
@@ -24,5 +25,13 @@ public class TaskMapper {
                 .finished(taskInput.isFinished())
                 .createdAt(task.getCreatedAt())
                 .build();
+    }
+
+    public static TaskMessage toTaskMessage(Task task, Action action) {
+        return TaskMessage.create(
+                task.getPersonId(),
+                task.getUuid(),
+                action
+        );
     }
 }

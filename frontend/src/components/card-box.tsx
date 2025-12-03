@@ -79,18 +79,20 @@ export function CardBox({ task, className, ...props }: CardBoxProps) {
             </div>
 
             <div className="flex gap-2 items-center justify-center">
-            <EditTask 
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-                task={task} 
-            />
+                <EditTask
+                    id="edit-icon"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    task={task}
+                />
 
-            <Trash 
-                size={20} 
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"  
-                onClick={() => {
-                    mutation.mutate()
-                }}
-            />
+                <Trash
+                    id="trash-icon"
+                    size={20}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    onClick={() => {
+                        mutation.mutate()
+                    }}
+                />
             </div>
         </span>
     )
