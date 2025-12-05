@@ -3,7 +3,6 @@ package com.example.task_manager.utils;
 public enum Action {
     CREATE("CREATE"),
     DELETE("DELETE"),
-    UPDATE("UPDATE"),
     FINISH("FINISH");
 
     private final String key;

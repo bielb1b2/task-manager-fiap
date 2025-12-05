@@ -91,6 +91,12 @@ public class TaskService implements ITaskService {
         if(taskRemoved.isEmpty()) {
             throw new NotFoundException("Task not found");
         }
+
+        CompletableFuture.runAsync(() -> {
+            TaskMessage taskMessage = TaskMapper.toTaskMessage(taskRemoved.get(), Action.DELETE);
+            taskMessageService.execute(taskMessage);
+        }, Executors.newSingleThreadExecutor());
+
         return null;
     }
 
@@ -111,10 +117,18 @@ public class TaskService implements ITaskService {
         OneTaskValidate.validate(personId, taskId);
         Optional<Task> task = taskRepository.getTask(personId, taskId);
         Task result = task.orElseThrow(() -> new NotFoundException("Task not found"));
+        if(result.isFinished()) {
+            return TaskMapper.toOut(result);
+        }
         result.toggleFinish();
-
         Optional<Task> taskUpdated = this.taskRepository.update(result);
         Task newTask = taskUpdated.orElseThrow(() -> new NotFoundException("Task not found"));
+
+        CompletableFuture.runAsync(() -> {
+            TaskMessage taskMessage = TaskMapper.toTaskMessage(newTask, Action.FINISH);
+            taskMessageService.execute(taskMessage);
+        }, Executors.newSingleThreadExecutor());
+
         return TaskMapper.toOut(newTask);
     }
 }

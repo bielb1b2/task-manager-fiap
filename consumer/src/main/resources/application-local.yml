@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8181}
+
+spring:
+  application:
+    name: consumer
+
+  rabbitmq:
+    host: ${RABBITMQ_URL:localhost}
+    port: 5672
+    username: admin
+    password: admin
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 10
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/tasks}
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver

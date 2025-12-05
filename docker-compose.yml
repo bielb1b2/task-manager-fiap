@@ -8,8 +8,15 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       REDIS_URL: redis://redis:6379
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tasks
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      RABBITMQ_URL: rabbitmq 
     depends_on:
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - app-net
       - redis-net
@@ -19,12 +26,57 @@ services:
       timeout: 5s
       retries: 5
 
+  consumer:
+    container_name: consumer
+    build:
+      context: ./consumer
+    ports:
+      - "8181:8181"
+    environment:
+      PORT: 8181
+      RABBITMQ_URL: rabbitmq
+      DATABASE_URL: jdbc:postgresql://postgres:5432/tasks
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: bitnami/postgresql:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRESQL_USERNAME: admin
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: tasks
+      POSTGRESQL_POSTGRES_PASSWORD: postgres123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d tasks"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"   # Porta AMQP
-      - "15672:15672" # Porta do Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
@@ -108,3 +160,6 @@ networks:
 volumes:
   sonarqube_data:
   sonarqube_extensions:
+  postgres_data:
+  jenkins_data:
+  maven_cache:

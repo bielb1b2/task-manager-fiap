@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,13 +19,16 @@ import java.util.List;
 
 public class TaskServiceTest {
 
+    @Mock
+    ITaskMessageService taskMessageService;
     InMemoryRepository taskRepository;
     private ITaskService taskService;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         taskRepository = new InMemoryRepository();
-        taskService = new TaskService(taskRepository);
+        taskService = new TaskService(taskRepository, taskMessageService);
     }
 
     @Test
