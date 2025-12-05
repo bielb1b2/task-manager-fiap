@@ -8,9 +8,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       REDIS_URL: redis://redis:6379
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tasks
-      SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: admin
       RABBITMQ_URL: rabbitmq 
     depends_on:
       postgres:
