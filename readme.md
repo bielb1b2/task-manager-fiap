@@ -11,7 +11,7 @@
 
 **Um gerenciador de tarefas moderno, rápido e sem distrações**
 
-[Features](#-features) • [Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API](#-api-documentation) • [Architecture](#-architecture)
+[Features](#-features) • [Stack](#️-tech-stack) • [Getting Started](#-getting-started) • [API](#-api-documentation) • [Architecture](#️-architecture)
 
 </div>
 
