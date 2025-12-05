@@ -147,8 +147,7 @@ services:
       - "8081:8080"
       - "50000:50000"
     volumes:
-      - ./jenkins-data:/var/jenkins_home
-      - ./maven-cache:/root/.m2
+      - jenkins_data:/var/jenkins_home
     restart: unless-stopped
     networks:
       - app-net
@@ -162,4 +161,3 @@ volumes:
   sonarqube_extensions:
   postgres_data:
   jenkins_data:
-  maven_cache:
