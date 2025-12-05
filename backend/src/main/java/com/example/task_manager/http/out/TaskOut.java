@@ -8,6 +8,8 @@ public class TaskOut {
     private boolean finished;
     private String createdAt;
 
+    public TaskOut() {}
+
     private TaskOut(Builder builder) {
         this.uuid = builder.uuid;
         this.title = builder.title;
